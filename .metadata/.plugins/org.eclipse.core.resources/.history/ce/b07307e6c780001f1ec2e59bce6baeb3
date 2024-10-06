@@ -1,0 +1,248 @@
+package com.pos.metadataservice.service.impl;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.rsocket.RSocketProperties.Server.Spec;
+import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.pos.metadataservice.model.db.DisplayConfig;
+import com.pos.metadataservice.model.db.MetaDataFieldDetails;
+import com.pos.metadataservice.model.db.MetadataInfo;
+import com.pos.metadataservice.model.dto.MetaDataRequest;
+import com.pos.metadataservice.repo.MetadataRepository;
+import com.pos.metadataservice.service.intf.MetadataService;
+import com.pos.metadataservice.specialkeys.SpecialKeys;
+
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+
+@Service
+public class MetadataServiceImpl implements MetadataService {
+
+	@Autowired
+	private EntityManager entityManager;
+
+	@Autowired
+	private MetadataRepository metadataRepository;
+
+	@Autowired
+	private Environment env;
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Override
+	public Map<String, List<String>> fetchFcbTypes() {
+		Map<String, List<String>> responseMap = new LinkedHashMap<>();
+
+		String query = "SELECT FCBName, GROUP_CONCAT(DISTINCT Table_Name) AS Table_Names FROM cdv_metadata_info GROUP BY FCBName";
+		String dedupTypesQuery = "SELECT DISTINCT Dedupe_Type  FROM cdv_metadata_info WHERE Dedupe_Type IS NOT NULL AND Dedupe_Type != ''";
+
+		try {
+			List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+
+			for (Map<String, Object> row : result) {
+				String fcbName = (String) row.get(SpecialKeys.FCBNAME);
+				String tableNames = (String) row.get("Table_Names");
+				List<String> tableNameList = Arrays.asList(tableNames.split(","));
+				responseMap.put(fcbName, tableNameList);
+			}
+			List<String> dedupQuery = jdbcTemplate.queryForList(dedupTypesQuery, String.class);
+			responseMap.put("dedup_types", dedupQuery);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return responseMap;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MetadataInfo> fetchMetadata(String fcbName) {
+		List<MetadataInfo> finalList = new ArrayList<>();
+		Type type = new TypeToken<List<Map<String, String>>>() {
+		}.getType();
+		String metadataJsonQuery = "SELECT metadata_json FROM cdv_metadata_detail_json WHERE fcbName = ? and is_active='Y' order by insert_tstamp desc limit 1";
+		String displayConfig = "SELECT * FROM cdv_display_config";
+		String metadataInfoQuery = "SELECT * FROM cdv_metadata_info WHERE FCBName = ?";
+		try {
+			List<String> metaDataJson = jdbcTemplate.queryForList(metadataJsonQuery, String.class, fcbName);
+
+			List<DisplayConfig> configInfo = entityManager.createNativeQuery(displayConfig, DisplayConfig.class)
+					.getResultList();
+
+			Map<String, List<DisplayConfig>> configInfoByType = configInfo.stream()
+					.collect(Collectors.groupingBy(config -> config.getDedupeType().toLowerCase()));
+
+			if (ObjectUtils.isNotEmpty(metaDataJson)) {
+				List<Map<String, String>> jsonData = new Gson().fromJson(metaDataJson.get(0), type);
+				for (Map<String, String> map : jsonData) {
+					String dedupeType = map.get(SpecialKeys.DEDUPETYPE);
+					MetadataInfo metadataInfo = new MetadataInfo();
+					metadataInfo.setSl(Integer.parseInt(SpecialKeys.SL));
+					metadataInfo.setFcbName(SpecialKeys.FCBNAME);
+					metadataInfo.setTableName(SpecialKeys.TABLENAME);
+					metadataInfo.setDbColumnName(SpecialKeys.DBCOLUMNNAME);
+					metadataInfo.setDisplayColumnName(SpecialKeys.DISPLAYCOLUMNNAME);
+					metadataInfo.setPsxDataType(SpecialKeys.PSXDATATYPE);
+					metadataInfo.setDedupeType(dedupeType);
+					metadataInfo.setIsToParticipateInDedupe(SpecialKeys.ISTOPARTICIPATEINDB);
+					metadataInfo.setDomainValues(SpecialKeys.DOMAINVALUES);
+					metadataInfo.setNotNull(SpecialKeys.NOTNULL);
+					metadataInfo.setValidationExpression(SpecialKeys.VALIDATIONEXPRESSION);
+
+					String dedupeTypeToLowerCase = dedupeType.toLowerCase();
+					List<DisplayConfig> matchingConfigs = configInfoByType.getOrDefault(dedupeTypeToLowerCase, null);
+					metadataInfo.setZkpinfo(matchingConfigs);
+					finalList.add(metadataInfo);
+				}
+
+			} else {
+
+				List<MetadataInfo> metadataList = entityManager.createNativeQuery(metadataInfoQuery, MetadataInfo.class)
+						.setParameter(1, fcbName).getResultList();
+
+				for (MetadataInfo info : metadataList) {
+					String dedupeType = info.getDedupeType().toLowerCase();
+					List<DisplayConfig> matchingConfigs = configInfoByType.getOrDefault(dedupeType, null);
+					info.setZkpinfo(matchingConfigs);
+					finalList.add(info);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return finalList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional
+	@Modifying
+	public String saveMetadata(MetaDataRequest metaDataRequest) {
+		String response;
+		Type type = new TypeToken<List<Map<String, String>>>() {
+		}.getType();
+		try {
+			// storing field wise(user can see what he/she changed at that point of time
+			metadataRepository.deleteAll();
+			metadataRepository.saveAll(metaDataRequest.getMetadataInfo());
+
+			// forming metadata as json
+			List<Map<String, String>> metaDataList = new ArrayList<>();
+			for (MetaDataFieldDetails metadataInfo : metaDataRequest.getMetadataInfo()) {
+				Map<String, String> metaDataMap = new LinkedHashMap<>();
+				metaDataMap.put(SpecialKeys.SL, metadataInfo.getSl().toString());
+				metaDataMap.put(SpecialKeys.FCBNAME, metadataInfo.getFcbName());
+				metaDataMap.put(SpecialKeys.TABLENAME, metadataInfo.getTableName());
+				metaDataMap.put(SpecialKeys.DBCOLUMNNAME, metadataInfo.getDbColumnName());
+				metaDataMap.put(SpecialKeys.PSXDATATYPE, metadataInfo.getPsxDataType());
+				metaDataMap.put(SpecialKeys.DISPLAYCOLUMNNAME, metadataInfo.getDisplayColumnName());
+				metaDataMap.put(SpecialKeys.DEDUPETYPE, metadataInfo.getDedupeType());
+				metaDataMap.put(SpecialKeys.ISTOPARTICIPATEINDB, metadataInfo.getIsToParticipateInDedupe());
+				metaDataMap.put(SpecialKeys.DOMAINVALUES, metadataInfo.getDomainValues());
+				metaDataMap.put(SpecialKeys.NOTNULL, metadataInfo.getNotNull());
+				metaDataMap.put(SpecialKeys.VALIDATIONEXPRESSION, metadataInfo.getValidationExpression());
+				metaDataList.add(metaDataMap);
+			}
+
+			entityManager.createNativeQuery("UPDATE cdv_metadata_detail_json SET is_active='N' WHERE fcbName=?")
+					.setParameter(1, metaDataRequest.getFcbName()).executeUpdate();
+
+			entityManager
+					.createNativeQuery(
+							"INSERT INTO cdv_metadata_detail_json (metadata_json, is_active, fcbName) VALUES (?, ?, ?)")
+					.setParameter(1, new Gson().toJson(metaDataList)).setParameter(2, "Y")
+					.setParameter(3, metaDataRequest.getFcbName()).executeUpdate();
+
+			List<String> metadataValue = entityManager
+					.createNativeQuery("SELECT metadata_json FROM cdv_metadata_detail_json WHERE is_active ='Y'")
+					.getResultList();
+
+			// to save into a file
+			StringBuilder metadataStringBuilder = new StringBuilder();
+			metadataStringBuilder.append(
+					"SL,FCBName,Table_Name,DB_Column_Name,PSX_Data_Type,Display_Column_Name,Dedupe_Type,Is_To_Participate_In_Dedupe,Domain_Values,NotNull,ValidationExpression");
+
+			for (String metadata : metadataValue) {
+				List<MetadataInfo> metadatalist = new ArrayList<>();
+				List<Map<String, String>> jsonData = new Gson().fromJson(metadata, type);
+				for (Map<String, String> map : jsonData) {
+					MetadataInfo metadataInfo = new MetadataInfo();
+					metadataInfo.setSl(Integer.parseInt(SpecialKeys.SL));
+					metadataInfo.setFcbName(SpecialKeys.FCBNAME);
+					metadataInfo.setTableName(SpecialKeys.TABLENAME);
+					metadataInfo.setDbColumnName(SpecialKeys.DBCOLUMNNAME);
+					metadataInfo.setDisplayColumnName(SpecialKeys.DISPLAYCOLUMNNAME);
+					metadataInfo.setPsxDataType(SpecialKeys.PSXDATATYPE);
+					metadataInfo.setDedupeType(SpecialKeys.DEDUPETYPE);
+					metadataInfo.setIsToParticipateInDedupe(SpecialKeys.ISTOPARTICIPATEINDB);
+					metadataInfo.setDomainValues(SpecialKeys.DOMAINVALUES);
+					metadataInfo.setNotNull(SpecialKeys.NOTNULL);
+					metadataInfo.setValidationExpression(SpecialKeys.VALIDATIONEXPRESSION);
+					metadatalist.add(metadataInfo);
+				}
+
+				for (MetadataInfo info : metadatalist) {
+					String dedupetype = info.getDedupeType().equalsIgnoreCase("Equality")
+							? "\"" + info.getDisplayColumnName() + "\""
+							: info.getDisplayColumnName();
+
+					metadataStringBuilder.append(":::").append(info.getSl()).append(",").append(info.getFcbName())
+							.append(",").append(info.getTableName()).append(",").append(info.getDbColumnName())
+							.append(",").append(info.getPsxDataType()).append(",").append(dedupetype).append(",")
+							.append(info.getDedupeType()).append(",").append(info.getIsToParticipateInDedupe())
+							.append(",").append(info.getDomainValues()).append(",").append(info.getNotNull())
+							.append(",\"").append(info.getValidationExpression()).append("\"");
+				}
+			}
+
+			String finalString = metadataStringBuilder.toString();
+
+			if (!finalString.isEmpty()) {
+				saveProperty("engine.metatable", finalString);
+			}
+
+			response = "Successfully saved to DB";
+		} catch (Exception e) {
+			response = "Failed to save to DB";
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	public void saveProperty(String key, String value) {
+		Properties properties = new Properties();
+		try (FileInputStream input = new FileInputStream(env.getProperty("metatable.file.path"))) {
+			properties.load(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try (FileOutputStream output = new FileOutputStream(env.getProperty("metatable.file.path"))) {
+			properties.setProperty(key, value);
+			properties.store(output, null);
+			System.out.println("Property saved successfully.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}

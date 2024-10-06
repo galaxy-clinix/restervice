@@ -1,0 +1,32 @@
+
+Ñ	java:S1177"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b cb4769165f521522c40fb01ce7519ebdh
+Ñ	java:S117G"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 3c1f4d2c06fa937f9786176cb80928e9h
+Ñ	java:S117O"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b a0656dea3d75e2c51bea7cdfdd2605eah
+Ñ	java:S117_"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 71adeb3a9fccd87cfa29871946c44403h
+Ñ	java:S117o"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 68445e363e9980d3543ab659d516abaah
+Ñ	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 697121414297f7c8932f8575149727e1h
+Ö	java:S117á"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 0b7a22e4e8eaecbc0aa5347b418272d4h
+ç	java:S116"ZRename this field "datasource_name" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b cb4769165f521522c40fb01ce7519ebdh
+á	java:S116"TRename this field "row_count" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 3c1f4d2c06fa937f9786176cb80928e9h
+ã	java:S116"XRename this field "insert_tstamp" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b a0656dea3d75e2c51bea7cdfdd2605eah
+ä	java:S116"WRename this field "file_headers" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 71adeb3a9fccd87cfa29871946c44403h
+á	java:S116"TRename this field "is_mapped" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 68445e363e9980d3543ab659d516abaah
+ä	java:S116"WRename this field "eda_profiled" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 697121414297f7c8932f8575149727e1h
+å	java:S116"YRename this field "mapped_headers" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 0b7a22e4e8eaecbc0aa5347b418272d4h
+í	java:S116"_Rename this field "hashed_records_count" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b b2a5d701e6c562818c25ab56f7c2efe1h
+ë	java:S116"^Rename this field "error_records_count" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b f3c9f705924e22e471197c86243ab26fh
+ä	java:S116 "WRename this field "hashing_time" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 69a8a944df36d1cd4b80a1fa3e384c66h
+Å	java:S1003"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b e278bbbd67052b98390505f8ca2d2a4bh
+Å	java:S1007"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b da6aad1b00da364749caf8dd270416c7h
+Å	java:S100C"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b b1a552d41026bb517f49b021b1ea4401h
+Å	java:S100G"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 40cf560798d167f71e5d4b34362d89c3h
+Å	java:S100K"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 25add641b09288c23ecc433ced32fe17h
+Å	java:S100O"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b bc79758e1fda2863f98e20a9cb7836f9h
+Å	java:S100S"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b e97fb986d1c4fbd6148176eb58ec3d2eh
+Å	java:S100_"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 10a67b67215e69f135a7d94ce707bd17h
+Å	java:S100k"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b dfe5fd0c72f0d037c3e97d419a5b436bh
+Å	java:S100o"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b ba2410acdd7301f4f8667f960a43e668h
+Å	java:S100{"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 6b00510f228a877320829fff163f6af8h
+Å	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 5a3c0889c64ba1e9d007c9752f0e5d8fh
+Ç	java:S100É"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 61a4f8f6eb60b863ae0df1bc828f2578h
+Ç	java:S100á"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b e8877277a584683aef6da6df91195115h

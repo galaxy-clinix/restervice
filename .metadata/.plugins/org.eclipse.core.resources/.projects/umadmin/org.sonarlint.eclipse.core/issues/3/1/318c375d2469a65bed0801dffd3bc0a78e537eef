@@ -1,0 +1,92 @@
+
+ç
+java:S2293K"YReplace the type specification in this constructor call with the diamond operator ("<>").b 9a8db6f1dcbcea4cdf70d6c2bba4ddc7h
+ç
+java:S2293L"YReplace the type specification in this constructor call with the diamond operator ("<>").b 7c8e299672aa863431be2dedbd94f7b8h
+ç
+java:S2293M"YReplace the type specification in this constructor call with the diamond operator ("<>").b 9185041c3fcfededd27700582e12f234h
+ç
+java:S2293N"YReplace the type specification in this constructor call with the diamond operator ("<>").b 9185041c3fcfededd27700582e12f234h
+ç
+java:S2293o"YReplace the type specification in this constructor call with the diamond operator ("<>").b 9185041c3fcfededd27700582e12f234h
+é
+java:S2293§"YReplace the type specification in this constructor call with the diamond operator ("<>").b 7c8e299672aa863431be2dedbd94f7b8h
+é
+java:S2293◊"YReplace the type specification in this constructor call with the diamond operator ("<>").b 9185041c3fcfededd27700582e12f234h
+é
+java:S2293ÿ"YReplace the type specification in this constructor call with the diamond operator ("<>").b 68a28ce4c17ecb62b29cad78b344017ch
+é
+java:S2293Ÿ"YReplace the type specification in this constructor call with the diamond operator ("<>").b e46e7a5c58a137fb7d1fc1ce49810473h
+é
+java:S2293Ú"YReplace the type specification in this constructor call with the diamond operator ("<>").b 68a28ce4c17ecb62b29cad78b344017ch
+é
+java:S2293ì"YReplace the type specification in this constructor call with the diamond operator ("<>").b 9a8db6f1dcbcea4cdf70d6c2bba4ddc7h
+~
+java:S1192Ê"IDefine a constant instead of duplicating this literal "platform" 3 times.b f452b912e0341b0f1ebc1e170f35ca91h
+{
+java:S1192"GDefine a constant instead of duplicating this literal "failed" 3 times.b 298824ee7a253636cfb513d3bcdb7585h
+|
+java:S1192R"HDefine a constant instead of duplicating this literal "success" 3 times.b 3f4e64e951c8c7aef7ef39e78be5d406h
+d
+java:S1066ﬂ"/Merge this if statement with the enclosing one.b 39c8942e1038872a822c0dc75eedbde3h
+j
+java:S1141Ë"5Extract this nested try block into a separate method.b 080f651e3fcca17df3a47c2cecfcb880h
+ï
+java:S1488¬"`Immediately return this expression instead of assigning it to the temporary variable "response".b b87d77f51ed2a01308ec43a47b381fbch
+]
+java:S5411ô"(Use a primitive boolean expression here.b 962faea19244ebb10a3b21bf720abe66h
+q
+java:S4973Ù"<Strings and Boxed types should be compared using "equals()".b 2063849717d32dd19e534b77cabac517h
+ç	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.b f24db5c62d3077f701bc7bfaa846a169h
+k
+java:S2589l"7Remove this expression which always evaluates to "true"b 1ca806dc6acaf2bfba2d1d52bfb891d6h
+v
+java:S68131"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+v
+java:S68134"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+v
+java:S68137"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+v
+java:S6813:"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+v
+java:S6813="BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+Ü
+java:S3776C"RRefactor this method to reduce its Cognitive Complexity from 27 to the 15 allowed.b dbb8d783107ff7030914a6a612dd1d23h
+x
+java:S1854L"DRemove this useless assignment to local variable "solutionRolesMap".b ebf99cd6faaf5538eebd0e82663dcf57h
+u
+java:S1854M"ARemove this useless assignment to local variable "finalMenuList".b c5daae2eb25f90ff36d4f6a92f946129h
+^	java:S106^"+Replace this use of System.out by a logger.b bb1c3f2ea781263d3a2bb92b06a2061fh
+^	java:S106_"+Replace this use of System.out by a logger.b bb1c3f2ea781263d3a2bb92b06a2061fh
+^	java:S106i"+Replace this use of System.out by a logger.b bb1c3f2ea781263d3a2bb92b06a2061fh
+^	java:S106s"+Replace this use of System.out by a logger.b bb1c3f2ea781263d3a2bb92b06a2061fh
+s
+java:S1155á">Use isEmpty() to check whether the collection is empty or not.b 8d7f54e6a043b6a897f18930b3f51584h
+å
+java:S2737—"WAdd logic to this catch clause or eliminate it and rethrow the exception automatically.b a652da59e2966389a9a2c080018de388h
+_	java:S106≥"+Replace this use of System.out by a logger.b bb1c3f2ea781263d3a2bb92b06a2061fh
+_	java:S106µ"+Replace this use of System.out by a logger.b bb1c3f2ea781263d3a2bb92b06a2061fh
+á
+java:S3776÷"RRefactor this method to reduce its Cognitive Complexity from 30 to the 15 allowed.b a459714419e77b06d4e1b76f4f444390h
+å
+java:S2737Ö"WAdd logic to this catch clause or eliminate it and rethrow the exception automatically.b a652da59e2966389a9a2c080018de388h
+s
+java:S1155˘">Use isEmpty() to check whether the collection is empty or not.b a608e1a492041fa4ccdeb2acfb5834f7h
+ç
+java:S1158é"XCall the static method Integer.compare(...) instead of instantiating a temporary object.b d7cb999ebbc2c9468fb5d4caf6a7f18bh
+V
+java:S2129é"!Remove this "Integer" constructorb a0faef0851b4294c06f2b94bb1cb2044h
+}
+java:S5738é"HRemove this call to a deprecated method, it has been marked for removal.b a0faef0851b4294c06f2b94bb1cb2044h
+V
+java:S2129é"!Remove this "Integer" constructorb a0faef0851b4294c06f2b94bb1cb2044h
+}
+java:S5738é"HRemove this call to a deprecated method, it has been marked for removal.b a0faef0851b4294c06f2b94bb1cb2044h
+å
+java:S2737¶"WAdd logic to this catch clause or eliminate it and rethrow the exception automatically.b a652da59e2966389a9a2c080018de388h
+å
+java:S2737º"WAdd logic to this catch clause or eliminate it and rethrow the exception automatically.b a652da59e2966389a9a2c080018de388h
+˙
+java:S6541C"≈A "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 81 to 64, Complexity from 15 to 14, Nesting Level from 5 to 2, Number of Variables from 17 to 6.b dbb8d783107ff7030914a6a612dd1d23h
+s
+java:S2589«"7Remove this expression which always evaluates to "true"8¯ƒÉÌ§2b 2b025e9e9635a253c960b720dbc0ee4ch

@@ -1,0 +1,4 @@
+
+“	java:S116"`Rename this field "fileheader_actualname" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 24b34ca346fcf5e56abc48b2e45d1714h
+‹	java:S116"XRename this field "active_status" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 8fe3be42d4943da2de32cbdc2c3c0881h
+†	java:S116"SRename this field "group_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.b 0e939a4ffd3aacd724dd3b50147b4353h

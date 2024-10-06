@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="mysql-connector-java"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="spring.datasource.url=jdbc:mysql://192.168.1.3:3306/keylockmdm?autoReconnect=false&amp;rewriteBatchedStatements=true&amp;useCursorFetch=true&amp;sessionVariables=sql_mode=&apos;NO_ENGINE_SUBSTITUTION&apos;&amp;jdbcCompliantTruncation=false"/>
+			<item value="mysql-connector-java"/>
+			<item value="SPRING_DATASOURCE_URL"/>
+			<item value="ClinicModel clinModel"/>
+			<item value="Patient"/>
+		</list>
+		<list key="replacehistory">
+			<item value="PatientsModel"/>
+			<item value="Clinic"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="868"/>
+		<item key="DIALOG_Y_ORIGIN" value="225"/>
+		<item key="DIALOG_WIDTH" value="322"/>
+		<item key="DIALOG_HEIGHT" value="391"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+</section>
