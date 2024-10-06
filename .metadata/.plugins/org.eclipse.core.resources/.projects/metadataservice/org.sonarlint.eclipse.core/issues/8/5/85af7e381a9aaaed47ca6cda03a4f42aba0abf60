@@ -1,0 +1,9 @@
+
+v
+java:S6813"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+…
+java:S1128"JRemove this unused import 'com.fasterxml.jackson.core.type.TypeReference'.8ขÿิธฅ2b e9d009fb7ec620f633f5da201bcaf77eh
+
+java:S1128"HRemove this unused import 'com.fasterxml.jackson.databind.ObjectMapper'.8ขÿิธฅ2b 8ea01b4f5dfe2dc3e1f490664d8a153ah
+
+java:S1128"FRemove this unused import 'com.pos.metadataservice.model.dto.Mapping'.8ขÿิธฅ2b cd3353aaddd35d99f9d47b20ec9b433eh

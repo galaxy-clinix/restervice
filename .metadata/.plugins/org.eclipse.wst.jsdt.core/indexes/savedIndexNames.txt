@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+D:\Teamwork\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2604789890.index
+2186271546.index
+4024651139.index
+438550317.index
+700141963.index
+1426961465.index

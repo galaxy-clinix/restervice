@@ -1,0 +1,105 @@
+
+z	java:S112â"FDefine and throw a dedicated exception instead of using a generic one.b b0d4998a26f5b5742ad38c4af8817e32h
+~
+java:S1192Ë"IDefine a constant instead of duplicating this literal "LCHGTIME" 5 times.b 792a737fb71aeed3dbdec1d25a2747adh
+ç
+java:S1192ó"XDefine a constant instead of duplicating this literal "Invalid datetime format" 3 times.b 680f5865151531d06eba3ff98c7a43dfh
+{
+java:S1192Y"GDefine a constant instead of duplicating this literal "Failed" 5 times.b 7cbd524d3e2f71ecfd94378ecd6aabadh
+|
+java:S1192"GDefine a constant instead of duplicating this literal "unq_id" 6 times.b 530da61ba734a7c79b59b7d199e61f95h
+|
+java:S1192Æ"GDefine a constant instead of duplicating this literal "Common" 4 times.b 660b7e24f25882fc3a7a2c99f05c6b21h
+Å
+java:S1192◊"LDefine a constant instead of duplicating this literal "EMAIL_TYPE " 5 times.b f0dfc9e6cb5c3f26a7434fa7bf06af98h
+Å
+java:S1192÷"LDefine a constant instead of duplicating this literal "PHONE_TYPE " 5 times.b afcb12a0602e7aa53284e43edfd6387eh
+É
+java:S1192Â"NDefine a constant instead of duplicating this literal "COMMUNICATION" 3 times.b ff5ef9519efad3f7b505ba1d90be8aa8h
+~
+java:S1192´"IDefine a constant instead of duplicating this literal "BATCH_ID" 4 times.b f2081c678fa13b46c02eb78417722b61h
+Ç
+java:S1192≠"MDefine a constant instead of duplicating this literal "PSX_BATCH_ID" 6 times.b 5626428507ad894ff4f7de4c4118c657h
+
+java:S1192’"JDefine a constant instead of duplicating this literal "RESIDENCE" 3 times.b b2a5da9864b36bcd1214568551114ce4h
+Ç
+java:S1192’"MDefine a constant instead of duplicating this literal "ADDRESS_TYPE" 6 times.b 43b7fd0a53a70fa09aa36bf904a9b953h
+Å
+java:S1192™"LDefine a constant instead of duplicating this literal "CUST_UNQ_ID" 5 times.b b3d29895ef03b91925619a553f94a400h
+|
+java:S1192Ÿ"GDefine a constant instead of duplicating this literal "OFFICE" 3 times.b 26028f57ca91a65ee88bc8b21e974528h
+}
+java:S1192›"HDefine a constant instead of duplicating this literal "MAILING" 3 times.b 491c9341aa877de349f94e7ce5d7bd84h
+~
+java:S1192´"IDefine a constant instead of duplicating this literal "fcb.type" 3 times.b dd8c27387fb6231f37c30f06b6614f88h
+
+java:S1192·"JDefine a constant instead of duplicating this literal "PERMANENT" 3 times.b f85effbf66378896a29cd863a7d71be7h
+ç	java:S135Ì"YReduce the total number of break and continue statements in this loop to use at most one.b d55669822f1a8cf72ec1911e462a54ebh
+d
+java:S1066≠"/Merge this if statement with the enclosing one.b 39c8942e1038872a822c0dc75eedbde3h
+j
+java:S1141é"5Extract this nested try block into a separate method.b 080f651e3fcca17df3a47c2cecfcb880h
+}
+java:S2095â"HUse try-with-resources or close this "Connection" in a "finally" clause.b 689c42d337b89ae9ea639b017a0fcfdch
+|
+java:S2095ª"GUse try-with-resources or close this "CSVReader" in a "finally" clause.b 1491ede7a388ee09b2876cc7915ce44bh
+y
+java:S2583ú"DChange this condition so that it does not always evaluate to "false"b 6c53ca4da9444a962bf9b0cbf9efc1c1h
+v
+java:S6813H"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+v
+java:S6813K"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+v
+java:S6813N"BRemove this field injection and use constructor injection instead.b 0132ec8cee01c5dd244e1a60fe6448a1h
+q	java:S107∂"=Method has 10 parameters, which is greater than 7 authorized.b bac2658b7443fe6221bdbaa2a305ee6bh
+Ü
+java:S3776R"RRefactor this method to reduce its Cognitive Complexity from 37 to the 15 allowed.b 0672779056fa26b9b4bb54a762453596h
+Ø
+java:S6204ê"zReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()' and ensure that the list is unmodified.b f31c9542f92d797a57d6f9bafca179cdh
+^
+java:S2093V"*Change this "try" to a try-with-resources.b 080f651e3fcca17df3a47c2cecfcb880h
+_
+java:S2093’"*Change this "try" to a try-with-resources.b 080f651e3fcca17df3a47c2cecfcb880h
+á
+java:S3776ù"RRefactor this method to reduce its Cognitive Complexity from 35 to the 15 allowed.b d911f0150f4e6d9a4e0323907e8e8911h
+[
+java:S1075∏"&Remove this hard-coded path-delimiter.b bc35ab27cca27ebc3823ba53646551a5h
+_
+java:S2093¶"*Change this "try" to a try-with-resources.b 080f651e3fcca17df3a47c2cecfcb880h
+`
+java:S1172Ç"+Remove this unused method parameter "time".b 07cc694b9b3fc636710fa08b6922c42bh
+g
+java:S1172¶"2Remove this unused method parameter "installname".b e4fe3d2ef5d78c4be1e032ce3d3f7a46h
+o
+java:S6213´":Rename this variable to not match a restricted identifier.b de17f0f24b49f8364187891f8550ffbbh
+à
+java:S3776∂"SRefactor this method to reduce its Cognitive Complexity from 154 to the 15 allowed.b bac2658b7443fe6221bdbaa2a305ee6bh
+_	java:S106≤"+Replace this use of System.out by a logger.b bb1c3f2ea781263d3a2bb92b06a2061fh
+á
+java:S3776’"RRefactor this method to reduce its Cognitive Complexity from 68 to the 15 allowed.b e0c97ae5c123e68cce88e52a39b58866h
+Ø
+java:S6204ø"zReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()' and ensure that the list is unmodified.b f31c9542f92d797a57d6f9bafca179cdh
+å
+java:S2737‘"WAdd logic to this catch clause or eliminate it and rethrow the exception automatically.b a652da59e2966389a9a2c080018de388h
+£
+java:S1130€"nRemove the declaration of thrown exception 'java.sql.SQLException', as it cannot be thrown from method's body.b ad249e05eb304d96ade91e500634f62ah
+Ñ
+java:S1172⁄"ORemove these unused method parameters "conn", "dgTableName", "batchid", "type".b 0c1d0e2ef91d68bdb15eff954448b898h
+_
+java:S2093·"*Change this "try" to a try-with-resources.b 080f651e3fcca17df3a47c2cecfcb880h
+á
+java:S3776Ñ"RRefactor this method to reduce its Cognitive Complexity from 33 to the 15 allowed.b 4fe175bf154c37a3935eca772719927dh
+£
+java:S1130Ö"nRemove the declaration of thrown exception 'java.sql.SQLException', as it cannot be thrown from method's body.b ad249e05eb304d96ade91e500634f62ah
+z
+java:S1172Ñ"ERemove these unused method parameters "conn", "aceTableName", "type".b 0c1d0e2ef91d68bdb15eff954448b898h
+_
+java:S2093ä"*Change this "try" to a try-with-resources.b 080f651e3fcca17df3a47c2cecfcb880h
+˚
+java:S6541R"∆A "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 100 to 64, Complexity from 17 to 14, Nesting Level from 6 to 2, Number of Variables from 28 to 6.b 0672779056fa26b9b4bb54a762453596h
+˚
+java:S6541ù"≈A "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 89 to 64, Complexity from 15 to 14, Nesting Level from 6 to 2, Number of Variables from 27 to 6.b d911f0150f4e6d9a4e0323907e8e8911h
+˝
+java:S6541∂"«A "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 185 to 64, Complexity from 65 to 14, Nesting Level from 10 to 2, Number of Variables from 33 to 6.b bac2658b7443fe6221bdbaa2a305ee6bh
+˚
+java:S6541’"≈A "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 88 to 64, Complexity from 24 to 14, Nesting Level from 7 to 2, Number of Variables from 23 to 6.b e0c97ae5c123e68cce88e52a39b58866h

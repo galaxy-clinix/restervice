@@ -1,0 +1,83 @@
+package com.pos.metadataservice;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pos.metadataservice.model.dto.InitialDataModel;
+import com.pos.metadataservice.model.dto.Mapping;
+
+import jakarta.annotation.PostConstruct;
+
+@SpringBootApplication
+public class MetadataserviceApplication extends SpringBootServletInitializer {
+
+	public static void main(String[] args) {
+		new SpringApplicationBuilder(MetadataserviceApplication.class).sources(MetadataserviceApplication.class)
+				.run(args);
+
+	}
+
+	public void test() {
+		String query = "select mapped_headers from cdv_mcdi_datasource_summary cmds where batchid ='17020308977500';";
+		String data = jdbcTemplate.queryForObject(query, String.class);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			List<Mapping> userList = objectMapper.readValue(data, new TypeReference<List<Mapping>>() {
+			});
+
+			System.out.println(userList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Value("${service.name}")
+	private String solutionName;
+
+	@PostConstruct
+	InitialDataModel initialData() {
+		String appPropConfigQuery = "select propertyname ,propertyvalue  from appprop_config ";
+		String appPropConfigServiceQuery = "select propertyname ,propvalue  from appprop_config_services acs where solutionname = '"
+				+ solutionName + "'";
+		List<Map<String, Object>> appPropConfig = jdbcTemplate.queryForList(appPropConfigQuery);
+		List<Map<String, Object>> appPropConfigService = jdbcTemplate.queryForList(appPropConfigServiceQuery);
+		Map<String, Object> data = new LinkedHashMap<>();
+
+		for (Map<String, Object> individualRecord : appPropConfig) {
+			String propertyName = (String) individualRecord.get("propertyname");
+			String propertyValue = (String) individualRecord.get("propertyvalue");
+			data.put(propertyName, propertyValue);
+		}
+
+		for (Map<String, Object> individualServiceRecord : appPropConfigService) {
+			String propertyName = (String) individualServiceRecord.get("propertyname");
+			String propertyValue = (String) individualServiceRecord.get("propvalue");
+			data.put(propertyName, propertyValue);
+		}
+
+		InitialDataModel dataModel = new InitialDataModel();
+		dataModel.setAppPropConfigKeyValues(data);
+		return dataModel;
+	}
+
+	@Bean
+	InitialDataModel initialDataModel() {
+		test();
+		return initialData();
+	}
+
+}

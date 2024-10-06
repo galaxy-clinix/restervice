@@ -1,0 +1,25 @@
+package com.pos.metadataservice.specialkeys;
+
+public class SpecialKeys {
+
+	private SpecialKeys() {
+	}
+
+	public static final String SUCCESS = "SUCCESS";
+	public static final String FAIL = "FAIL";
+	public static final String MESSAGE = "Message";
+	public static final String DATA = "Data";
+	public static final String NA = "NA";
+	public static final String FCBNAME = "FCBName";
+
+	public static final String TABLENAME = "Table_Name";
+	public static final String DBCOLUMNNAME = "DB_Column_Name";
+	public static final String DISPLAYCOLUMNNAME = "Display_Column_Name";
+	public static final String PSXDATATYPE = "PSX_Data_Type";
+	public static final String DEDUPETYPE = "Dedupe_Type";
+	public static final String ISTOPARTICIPATEINDB = "Is_To_Participate_In_Dedupe";
+	public static final String DOMAINVALUES = "Domain_Values";
+	public static final String NOTNULL = "NotNull";
+	public static final String VALIDATIONEXPRESSION = "ValidationExpression";
+
+}

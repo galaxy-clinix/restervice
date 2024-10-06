@@ -1,0 +1,375 @@
+package com.admin.pos.servieImpl;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.admin.pos.db.model.RolePermissions;
+import com.admin.pos.db.model.User;
+import com.admin.pos.db.model.UserActivity;
+import com.admin.pos.db.model.UserProfile;
+import com.admin.pos.dto.ClientSolution;
+import com.admin.pos.dto.LoginRequest;
+import com.admin.pos.dto.LoginResponse;
+import com.admin.pos.dto.Menus;
+import com.admin.pos.dto.UserExtn;
+import com.admin.pos.dto.UserProfileExtn;
+import com.admin.pos.repository.AdminRepository;
+import com.admin.pos.repository.MDMMenuRepository;
+import com.admin.pos.repository.UserLogActivityRepository;
+import com.admin.pos.repository.UserProfileRepository;
+import com.admin.pos.service.AdminService;
+import com.admin.pos.util.PasswordDecryptor;
+import com.admin.pos.util.PosidexRandom;
+import com.admin.pos.util.ResponseAsJson;
+import com.admin.pos.util.SecurityUtils;
+import com.google.gson.Gson;
+
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+
+@Service
+@SuppressWarnings("unchecked")
+public class AdminServiceImpl implements AdminService {
+
+	@Autowired
+	private AdminRepository adminRepository;
+
+	@Autowired
+	private UserLogActivityRepository userLogActivityRepo;
+
+	@Autowired
+	private UserProfileRepository userProfileRepo;
+
+	@Autowired
+	private EntityManager entityManager;
+	
+	@Autowired
+	private MDMMenuRepository menuRepo;
+
+	@Override
+	@Transactional
+	@Modifying
+	public ResponseAsJson<Object, Object> getLoginDetails(LoginRequest loginRequest, String secrectkey) {
+		ResponseAsJson<Object, Object> finalResponse = new ResponseAsJson<>();
+		LoginResponse response = new LoginResponse();
+		Boolean userStatus = false;
+		try {
+			String pass = loginRequest.getUser().getPassword();
+			String userName = loginRequest.getUser().getUserName();
+			String password = PasswordDecryptor.Decrypt(secrectkey, pass);
+			Set<ClientSolution> solutionList = new HashSet<ClientSolution>();
+			Map<String, String> solutionRolesMap = new HashMap<String, String>();
+			List<Menus> finalMenuList = new ArrayList<Menus>();
+			Set<Menus> menuSet = new HashSet<Menus>();
+			UserExtn userExten = validateUserNamePassword(userName, password);
+
+			if (userExten.getUser() != null && userExten.getUser().getUserName() != null) {
+				if (userExten.getStatus().equalsIgnoreCase("success")
+						&& userExten.getUserType().equalsIgnoreCase("A")) {
+					UserActivity userActivity = new UserActivity();
+					userActivity.setUserId(userExten.getUser().getUserId());
+					userActivity.setLogInTime(new java.sql.Timestamp(System.currentTimeMillis()));
+					userActivity.setLogInStatus(userExten.getLoginStatus());
+					userActivity.setLogInStatus(userExten.getStatus());
+					userActivity.setLogtype("Login");
+
+					userLogActivityRepo.save(userActivity);
+
+					response.setModel(userExten.getUser());
+					System.out.println("Solution Name**" + loginRequest.getSolutionname());
+					System.out.println("userName**" + userName);
+
+					List<UserProfile> profileList = entityManager
+							.createNativeQuery("select * from mdm_user_profile where user_name=? and solution_name=?",
+									UserProfile.class)
+							.setParameter(1, userName).setParameter(2, loginRequest.getSolutionname()).getResultList();
+					if (!profileList.isEmpty())
+						solutionList = buildSolutionList(profileList);
+					response.setLandingPage(profileList.get(0).getLanding_page());
+
+					System.out.println("solutionList::" + new Gson().toJson(solutionList));
+					response.setSolutions(solutionList);
+
+					if (solutionList != null && !solutionList.isEmpty())
+						menuSet = buildMenuList(solutionList, loginRequest.getSolutionname());
+
+					finalMenuList = new ArrayList<Menus>(menuSet);
+					sort(finalMenuList);
+					response.setMenus(menuSet);
+					solutionRolesMap = getUserSolutionRoles(solutionList);
+					System.out.println("**SolutionRoles **" + new Gson().toJson(solutionRolesMap));
+					response.setSolutionRoles(solutionRolesMap);
+				} else if (userExten.getUserType().equalsIgnoreCase("S")) {
+
+					response.setError("Your Account is InActive.");
+					response.setModel(null);
+				} else if (userExten.getUserType().equalsIgnoreCase("D")) {
+
+					response.setError("Your Account is Deleted.");
+					response.setModel(null);
+				}
+
+				else if (userExten.getStatus().equalsIgnoreCase("failed")) {
+					response.setError("Login Failed Invalid Username or Password");
+					response.setModel(null);
+				}
+				response.setUserStatus(userExten.getStatus());
+				response.setUserType(userExten.getUserType());
+				response.setLoginStatus(userExten.getLoginStatus());
+
+				if (response.getSolutions().size() > 0) {
+					for (ClientSolution sol : response.getSolutions()) {
+						if (loginRequest.getSolutionname().equalsIgnoreCase(sol.getSolutionName())) {
+							userStatus = true;
+						}
+					}
+				}
+
+			} else
+				response.setError("Please Enter a Correct UserName Or Password");
+
+			
+		} catch (Exception e) {
+			finalResponse.setData("Error occured");
+			finalResponse.setMessage("failed");
+			finalResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			e.printStackTrace();
+		}
+
+		if (!userStatus) {
+			response.setLoginStatus("D");
+			response.setError("Unauthorized User!");
+		}
+		finalResponse.setData(response);
+		finalResponse.setMessage("success");
+		finalResponse.setStatus(HttpStatus.OK);
+		return finalResponse;
+	}
+
+	private Map<String, String> getUserSolutionRoles(Set<ClientSolution> solutionList) {
+		Map<String, String> solutionRoles = new HashMap<String, String>();
+		for (ClientSolution currentRow : solutionList) {
+			if ("role_name".equalsIgnoreCase(currentRow.getUserProfile().getRolename())) {
+			 solutionRoles.put(currentRow.getUserProfile().getSolutionName(),currentRow.getUserProfile().getRolename());
+			}
+		}
+
+		return solutionRoles;
+	}
+
+	private UserExtn validateUserNamePassword(String userName, String password) throws Exception {
+        User user = null;
+        UserExtn userExtn = new UserExtn();
+        try {
+            System.out.println("**userName**" + userName);
+            List<User> users = adminRepository.findAll();
+            System.out.println(new Gson().toJson(users));
+            Optional<User> userModelOptions = adminRepository.getUser(userName);
+
+            if (userModelOptions.isPresent() && ObjectUtils.isNotEmpty(userModelOptions.get().getUserName())) {
+                user = userModelOptions.get();
+                userExtn.setUserType(user.getStatus());
+                if (Boolean.FALSE) {
+                    if (!user.getStatus().equalsIgnoreCase("S")) {
+                        if (user.getFailedLoginAttempts() == null)
+                            adminRepository.updateFailedAttempts(1, user.getUserId());
+                        else
+                            adminRepository.updateFailedAttempts(user.getFailedLoginAttempts() + 1, user.getUserId());
+                    }
+
+                    userExtn.setStatus("failed");
+                    userExtn.setLoginStatus("N");
+                    return userExtn;
+                } else if (Boolean.TRUE) {
+                    userExtn.setStatus("success");
+                    userExtn.setLoginStatus("Y");
+
+                }
+                userExtn.setUser(user);
+            }
+
+        } catch (Exception ex) {
+
+            throw ex;
+        }
+        return userExtn;
+    }
+	
+	private  LinkedHashSet<Menus> buildMenuList(Set<ClientSolution> clientProfileList, String solutionname) {
+		LinkedHashSet<Menus> finalmenus = new LinkedHashSet<Menus>();
+		LinkedHashSet<RolePermissions> pageAccessList = new LinkedHashSet<RolePermissions>();
+		Map<Integer, Menus> menus = new HashMap<Integer, Menus>();
+		try {
+			for (ClientSolution clientSolution : clientProfileList) {
+				if (clientSolution != null && clientSolution.getUserProfile() != null
+						&& clientSolution.getUserProfile().getPageAccessList() != null)
+
+					if (clientSolution.getSolutionName().equalsIgnoreCase(solutionname)) {
+						pageAccessList.addAll(clientSolution.getUserProfile().getPageAccessList());
+					}
+			}
+			if (pageAccessList != null && !pageAccessList.isEmpty()) {
+				for (RolePermissions pageAccess : pageAccessList) {
+					Menus menu = new Menus();
+					menu.setMenuId(pageAccess.getMenuId());
+					menu.setMenuName(pageAccess.getMenuName());
+					try {
+						menu.setImagename(menuRepo.getMenuImage(pageAccess.getMenuId()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					menus.put(pageAccess.getMenuId(), menu);
+				}
+			}
+
+			for (Entry<Integer, Menus> entry : menus.entrySet()) {
+				LinkedHashSet<RolePermissions> pageList = new LinkedHashSet<RolePermissions>();
+				for (RolePermissions page : pageAccessList) {
+					if (page.getMenuId() == entry.getKey()
+							&& page.getMenuName().trim().equalsIgnoreCase(entry.getValue().getMenuName().trim())) {
+						pageList.add(page);
+					}
+				}
+				if (pageList != null && pageList.size() > 0) {
+					entry.getValue().setPages(pageList);
+					if (pageList != null && pageList.size() > 1)
+						entry.getValue().setIsChildAvailable("Yes");
+					else
+						entry.getValue().setIsChildAvailable("No");
+				}
+
+				finalmenus.add(entry.getValue());
+			}
+		} catch (Exception ex) {
+
+			throw ex;
+		}
+
+		return finalmenus;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void sort(List<Menus> list) {
+
+		list.sort((o1, o2) -> new Integer(o1.getMenuId()).compareTo(new Integer(o2.getMenuId())));
+	}
+
+	@SuppressWarnings("unchecked")
+	private Set<ClientSolution> buildSolutionList(List<UserProfile> profileList) {
+		Set<ClientSolution> clientSolutionList = new HashSet<ClientSolution>();
+		try {
+			for (UserProfile userProfile : profileList) {
+				ClientSolution solution = new ClientSolution();
+				UserProfileExtn extn = new UserProfileExtn();
+				extn.setUserName(userProfile.getUserName());
+				extn.setSolutionName(userProfile.getSolutionName());
+				extn.setRolename(userProfile.getRole_name());
+				solution.setSolutionName(userProfile.getSolutionName());
+				String query = "select distinct s.* from mdm_role_permissions s where s.role_name='"
+						+ userProfile.getRole_name() + "' and s.solution_name='" + userProfile.getSolutionName()
+						+ "' and s.active='Y' order by menu_id,page_id asc";
+
+				extn.setPageAccessList(entityManager.createNativeQuery(query, RolePermissions.class).getResultList());
+				solution.setUserProfile(extn);
+				clientSolutionList.add(solution);
+			}
+		} catch (Exception ex) {
+
+			throw ex;
+		}
+		return clientSolutionList;
+	}
+
+	@Override
+	@Transactional
+	@Modifying
+	public void updateUserLoginDetails(Integer userId) {
+		try {
+			UserActivity userActivity = new UserActivity();
+			userActivity.setUserId(userId);
+			userActivity.setLogOutTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			userActivity.setLogtype("logout");
+			userLogActivityRepo.save(userActivity);
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date();
+
+			entityManager.createNativeQuery("update mdm_users set last_logged_in=? where user_id=?")
+					.setParameter(1, formatter.format(date)).setParameter(2, userId).executeUpdate();
+
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}
+
+	@Override
+	public List<User> fetchUsers() {
+		List<User> response = adminRepository.findAll();
+		return response;
+	}
+
+	@Override
+	public String updatePassword(User request) {
+		String status = "Success";
+		Long randomNumber = PosidexRandom.nextPasswordRandomNumber();
+		String saltHashedCode;
+		try {
+			saltHashedCode = SecurityUtils.sha1(randomNumber.toString());
+			String saltPassword = request.getPassword() + saltHashedCode;
+			String hashedPassword = SecurityUtils.sha1(saltPassword);
+			request.setHashPassword(hashedPassword);
+			request.setSaltPassword(saltHashedCode);
+			adminRepository.save(request);
+
+		} catch (Exception ex) {
+			status = "Failed";
+		}
+		return status;
+	}
+
+	@Override
+	public String createUser(User request) {
+		String status = "Success";
+		Long randomNumber = PosidexRandom.nextPasswordRandomNumber();
+		String saltHashedCode;
+		try {
+			saltHashedCode = SecurityUtils.sha1(randomNumber.toString());
+			String saltPassword = request.getPassword() + saltHashedCode;
+			String hashedPassword = SecurityUtils.sha1(saltPassword);
+			request.setHashPassword(hashedPassword);
+			request.setSaltPassword(saltHashedCode);
+			request.setEmail(request.getUserName());
+			request.setClientId(1);
+			request.setClientCd("platform");
+			request.setLandingPage("dashboard");
+			request.setStatus("A");
+			adminRepository.save(request);
+
+			UserProfile userProfile = new UserProfile();
+			userProfile.setUserName(request.getUserName());
+			userProfile.setSolutionName("platform");
+			userProfile.setRole_name(request.getRoleName());
+			userProfile.setClientCd("platform");
+			userProfileRepo.save(userProfile);
+
+		} catch (Exception ex) {
+			status = "Failed";
+		}
+		return status;
+	}
+
+}
